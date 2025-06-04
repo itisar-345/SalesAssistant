@@ -1,0 +1,63 @@
+.side-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100%;
+  background: #6a11cb;
+  color: white;
+  padding: 1rem;
+  box-shadow: 2px 0 10px rgba(190, 185, 200, 0.2);
+  z-index: 1000;
+  overflow-y: auto;
+  transition: transform 0.3s ease-in-out;
+}
+
+.side-nav.closed {
+  transform: translateX(-100%);
+}
+
+.side-nav.open {
+  transform: translateX(0);
+}
+
+.side-nav h3 {
+  font-size: 1.2rem;
+  margin-top: 5rem; 
+  margin-bottom: 1rem;
+  color: #ccc;
+}
+
+.side-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.side-nav li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #333;
+  color: #eee;
+  font-size: 0.95rem;
+}
+
+.delete-btn {
+  background: none;
+  color: red;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+main {
+  margin-left: 260px; /* same as sidebar width */
+  padding: 1rem;
+  transition: margin-left 0.3s ease;
+}
+
+.side-nav.closed + .App main {
+  margin-left: 0;
+}

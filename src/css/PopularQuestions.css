@@ -1,0 +1,27 @@
+.popular-section {
+  text-align: center;
+  padding: 2rem;
+}
+
+.question-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.2rem;
+}
+
+.question-card {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 1rem;
+  width: 220px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.question-card:hover {
+  background: #f4f7ff;
+  transform: translateY(-2px);
+}
