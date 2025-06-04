@@ -2,15 +2,15 @@ import { useState, useRef, useEffect } from 'react';
 import { Send } from 'lucide-react';
 import { useConversation } from '../context/ConversationContext';
 import { useSpeech } from '../context/SpeechContext';
-import { useSettings } from '../context/SettingsContext';
-import VoiceWaveform from './VoiceWaveform';
+import { useSettings } from '../context/SettingsContext'; // Import useSettings
+import VoiceWaveform from './VoiceWaveform'; // Import VoiceWaveform
 
 const InputArea = () => {
   const [input, setInput] = useState('');
   const inputRef = useRef(null);
   const { addMessage, processMessage } = useConversation();
   const { selectedLanguage } = useSettings();
-  const { isListening, transcript, resetTranscript } = useSpeech();
+  const { isListening, transcript, resetTranscript, startListening, stopListening } = useSpeech(); // Destructure startListening and stopListening
 
   useEffect(() => {
     if (transcript) {
@@ -54,8 +54,6 @@ const InputArea = () => {
           />
 
           <button
-            type="submit"
-            aria-label="Send message"
             disabled={!input.trim()}
             style={{
               ...styles.sendButton,
@@ -68,12 +66,15 @@ const InputArea = () => {
           </button>
         </div>
 
-        {isListening && (
+        {/* Voice waveform indicator */}
+        {isListening && ( // Conditionally render the listening indicator
           <div style={styles.listeningContainer}>
-            <VoiceWaveform />
+            <VoiceWaveform /> {/* Render VoiceWaveform here */}
             <p style={styles.listeningText}>Listening in {selectedLanguage.name}...</p>
           </div>
         )}
+
+
       </form>
     </div>
   );
@@ -84,7 +85,7 @@ const styles = {
     padding: '16px',
   },
   form: {
-    position: 'relative',
+    position: 'relative', // Position relative for the send button
   },
   relative: {
     position: 'relative',
@@ -94,18 +95,17 @@ const styles = {
     padding: '12px 48px 12px 16px', // right padding to leave space for button
     borderRadius: '16px',
     border: '1px solid #e5e7eb', // gray-200
-    backgroundColor: '#f9fafb', // gray-50
-    resize: 'none',
     outline: 'none',
     fontSize: '16px',
     fontFamily: 'inherit',
     boxSizing: 'border-box',
     transition: 'box-shadow 0.2s ease',
+    resize: 'none', // Add this line to disable resizing
   },
   sendButton: {
-    position: 'absolute',
+    position: 'absolute', // Absolute position the button
     right: '8px',
-    bottom: '8px',
+    bottom: '8px', // Position it correctly
     padding: '10px',
     borderRadius: '16px',
     border: 'none',
@@ -113,7 +113,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    transition: 'all 0.2s ease',
+    transition: 'all 0.2s ease', // Smooth transition for hover/active states
   },
   sendButtonActive: {
     backgroundColor: '#3b82f6', // blue-500
@@ -126,6 +126,7 @@ const styles = {
     color: '#9ca3af', // gray-400
     cursor: 'not-allowed',
   },
+
   listeningContainer: {
     marginTop: '12px',
     display: 'flex',

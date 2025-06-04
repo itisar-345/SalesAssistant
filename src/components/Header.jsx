@@ -1,18 +1,31 @@
-import { Settings, PlusCircle } from 'lucide-react';
+import { Settings, PlusCircle, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { useConversation } from '../context/ConversationContext';
 
-const Header = ({ onSettingsClick }) => {
+const Header = ({ onSettingsClick, isSidebarOpen, setIsSidebarOpen }) => {
   const { clearMessages } = useConversation();
 
   return (
     <header style={styles.header}>
       <div style={styles.container}>
+        {/* Sidebar Toggle Button */}
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
+          style={styles.toggleButton}
+        >
+          {isSidebarOpen ? (
+            <PanelLeftClose style={styles.icon} />
+          ) : (
+            <PanelLeft style={styles.icon} />
+          )}
+        </button>
+        <div style={styles.leftGroup}>
         <div style={styles.leftSection}>
           <div style={styles.logoCircle}>
             <span style={styles.logoText}>AI</span>
           </div>
-          <div>
-            <h1 style={styles.title}>SalesAssist AI</h1>
+          <div style={styles.titleContainer}>
+            <h1 style={styles.title}>Sales Assistant</h1>
             <p style={styles.subtitle}>Your multilingual sales companion</p>
           </div>
         </div>
@@ -35,6 +48,7 @@ const Header = ({ onSettingsClick }) => {
             <Settings style={styles.settingsIcon} />
           </button>
         </div>
+        </div>
       </div>
     </header>
   );
@@ -55,10 +69,32 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+ leftGroup: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem', // Add space between toggle and logo/text
+ },
+  toggleButton: {
+    backgroundColor: 'transparent',
+    border: 'none',
+    cursor: 'pointer',
+    padding: '0.5rem', // Add some padding for click area
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: '0.75rem', // Add space between the toggle and logo
+    color: 'white', // Set icon color to white
+    transition: 'color 0.2s ease', // Smooth transition for hover
+  },
   leftSection: {
     display: 'flex',
     alignItems: 'center',
     gap: '0.75rem', // gap-3
+  },
+  titleContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
   },
   logoCircle: {
     width: '40px', // w-10
@@ -131,6 +167,11 @@ const styles = {
   settingsIcon: {
     width: '20px', // w-5
     height: '20px', // h-5
+  },
+  icon: {
+    width: '24px', // Increased size slightly for visibility
+    height: '24px',
+    color: 'white', // Ensure icon is white
   },
 };
 
