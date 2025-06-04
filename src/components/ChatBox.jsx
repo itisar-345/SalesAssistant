@@ -6,7 +6,6 @@ function ChatBox() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
 
-  // Load from cookies on mount
   useEffect(() => {
     const cachedMessages = getCache("chatHistory");
     if (cachedMessages) setMessages(cachedMessages);
@@ -15,24 +14,46 @@ function ChatBox() {
   const handleSend = () => {
     if (!input.trim()) return;
 
-    const newMessage = { text: input, type: "user", time: new Date().toLocaleTimeString() };
-    const updatedMessages = [...messages, newMessage];
-    setMessages(updatedMessages);
-    setCache("chatHistory", updatedMessages);
+    const userMessage = {
+      text: input,
+      type: "user",
+      time: new Date().toLocaleTimeString(),
+    };
+
+    setMessages((prevMessages) => {
+      const updatedMessages = [...prevMessages, userMessage];
+      setCache("chatHistory", updatedMessages);
+      return updatedMessages;
+    });
+
+    // Store user input into voiceCommands (sidebar)
+    const commands = getCache("voiceCommands") || [];
+    const updatedCommands = [...commands, input];
+    setCache("voiceCommands", updatedCommands);
+
     setInput("");
 
-    // Simulate assistant response
+    // Simulated bot reply after delay
     setTimeout(() => {
-      const botMessage = { text: "Sure, let me help you with that!", type: "bot", time: new Date().toLocaleTimeString() };
-      const finalMessages = [...updatedMessages, botMessage];
-      setMessages(finalMessages);
-      setCache("chatHistory", finalMessages);
+      const botMessage = {
+        text: "Sure, let me help you with that!",
+        type: "bot",
+        time: new Date().toLocaleTimeString(),
+      };
+
+      setMessages((prevMessages) => {
+        const finalMessages = [...prevMessages, botMessage];
+        setCache("chatHistory", finalMessages);
+        return finalMessages;
+      });
     }, 1000);
   };
 
   const handleClear = () => {
     setMessages([]);
+    setInput("");
     setCache("chatHistory", []);
+    setCache("voiceCommands", []);
   };
 
   return (

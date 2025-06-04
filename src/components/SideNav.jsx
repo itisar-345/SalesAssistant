@@ -19,7 +19,7 @@ function SideNav({ isOpen }) {
 
   return (
     <div className={`side-nav ${isOpen ? "open" : "closed"}`}>
-      <h3> Previous Commands</h3>
+      <h3>Previous Commands</h3>
       <ul>
         {commands.map((cmd, idx) => (
           <li key={idx}>
