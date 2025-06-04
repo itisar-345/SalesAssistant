@@ -3,7 +3,9 @@ const EXPIRY_DAYS = 30;
 export function setCache(key, value) {
   const expires = new Date();
   expires.setTime(expires.getTime() + EXPIRY_DAYS * 24 * 60 * 60 * 1000);
-  document.cookie = `${key}=${encodeURIComponent(JSON.stringify(value))};expires=${expires.toUTCString()};path=/`;
+  document.cookie = `${key}=${encodeURIComponent(
+    JSON.stringify(value)
+  )};expires=${expires.toUTCString()};path=/`;
 }
 
 export function getCache(key) {
