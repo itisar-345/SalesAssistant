@@ -16,12 +16,26 @@ function App() {
     <SettingsProvider>
       <SpeechProvider>
         <ConversationProvider>
-          <div style={styles.appContainer}>
+          <div
+            style={{
+              minHeight: '100vh',
+              backgroundColor: '#f9fafb',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
             <Header onSettingsClick={() => setIsSettingsOpen(true)} />
-            <div style={styles.mainWrapper}>
+            <div
+              style={{
+                display: 'flex',
+                flex: 1,
+                position: 'relative',
+              }}
+            >
               <div
                 style={{
-                  ...styles.sidebar,
+                  overflow: 'hidden',
+                  transition: 'width 0.3s ease',
                   width: isSidebarOpen ? '256px' : '0',
                 }}
               >
@@ -30,65 +44,57 @@ function App() {
 
               <button
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
-                style={styles.toggleButton}
+                aria-label={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: '1rem',
+                  backgroundColor: '#ffffff',
+                  padding: '0.5rem',
+                  borderTopRightRadius: '0.5rem',
+                  borderBottomRightRadius: '0.5rem',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                  cursor: 'pointer',
+                  transition: 'background-color 0.3s ease',
+                }}
               >
                 {isSidebarOpen ? (
-                  <PanelLeftClose style={styles.icon} />
+                  <PanelLeftClose
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      color: '#4b5563',
+                    }}
+                  />
                 ) : (
-                  <PanelLeft style={styles.icon} />
+                  <PanelLeft
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      color: '#4b5563',
+                    }}
+                  />
                 )}
               </button>
 
-              <main style={styles.chatArea}>
+              <main
+                style={{
+                  flex: 1,
+                }}
+              >
                 <ChatInterface />
               </main>
             </div>
 
-            <SettingsPanel isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+            <SettingsPanel
+              isOpen={isSettingsOpen}
+              onClose={() => setIsSettingsOpen(false)}
+            />
           </div>
         </ConversationProvider>
       </SpeechProvider>
     </SettingsProvider>
   );
 }
-
-const styles = {
-  appContainer: {
-    minHeight: '100vh',
-    backgroundColor: '#f9fafb',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  mainWrapper: {
-    display: 'flex',
-    flex: 1,
-    position: 'relative',
-  },
-  sidebar: {
-    overflow: 'hidden',
-    transition: 'width 0.3s ease',
-  },
-  toggleButton: {
-    position: 'absolute',
-    left: 0,
-    top: '1rem',
-    backgroundColor: '#ffffff',
-    padding: '0.5rem',
-    borderTopRightRadius: '0.5rem',
-    borderBottomRightRadius: '0.5rem',
-    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s ease',
-  },
-  icon: {
-    width: '20px',
-    height: '20px',
-    color: '#4b5563',
-  },
-  chatArea: {
-    flex: 1,
-  },
-};
 
 export default App;

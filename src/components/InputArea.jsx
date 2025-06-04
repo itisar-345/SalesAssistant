@@ -37,9 +37,9 @@ const InputArea = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <div style={styles.relative}>
+    <div style={{ padding: '16px' }}>
+      <form onSubmit={handleSubmit} style={{ position: 'relative' }}>
+        <div style={{ position: 'relative' }}>
           <textarea
             ref={inputRef}
             value={input}
@@ -48,7 +48,17 @@ const InputArea = () => {
             placeholder={`Type or speak in ${selectedLanguage.name}...`}
             rows={1}
             style={{
-              ...styles.textarea,
+              width: '100%',
+              padding: '12px 48px 12px 16px',
+              borderRadius: '16px',
+              border: '1px solid #e5e7eb',
+              backgroundColor: '#f9fafb',
+              resize: 'none',
+              outline: 'none',
+              fontSize: '16px',
+              fontFamily: 'inherit',
+              boxSizing: 'border-box',
+              transition: 'box-shadow 0.2s ease',
               minHeight: '60px',
             }}
           />
@@ -58,10 +68,22 @@ const InputArea = () => {
             aria-label="Send message"
             disabled={!input.trim()}
             style={{
-              ...styles.sendButton,
-              ...(input.trim()
-                ? styles.sendButtonActive
-                : styles.sendButtonDisabled),
+              position: 'absolute',
+              right: '8px',
+              bottom: '8px',
+              padding: '10px',
+              borderRadius: '16px',
+              border: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s ease',
+              backgroundColor: input.trim() ? '#3b82f6' : '#f3f4f6',
+              color: input.trim() ? 'white' : '#9ca3af',
+              boxShadow: input.trim()
+                ? '0 4px 6px -1px rgba(59, 130, 246, 0.5), 0 2px 4px -1px rgba(59, 130, 246, 0.06)'
+                : 'none',
+              cursor: input.trim() ? 'pointer' : 'not-allowed',
             }}
           >
             <Send size={20} />
@@ -69,75 +91,25 @@ const InputArea = () => {
         </div>
 
         {isListening && (
-          <div style={styles.listeningContainer}>
+          <div
+            style={{
+              marginTop: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '12px',
+              color: '#2563eb',
+            }}
+          >
             <VoiceWaveform />
-            <p style={styles.listeningText}>Listening in {selectedLanguage.name}...</p>
+            <p style={{ fontSize: '14px', fontWeight: '500' }}>
+              Listening in {selectedLanguage.name}...
+            </p>
           </div>
         )}
       </form>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    padding: '16px',
-  },
-  form: {
-    position: 'relative',
-  },
-  relative: {
-    position: 'relative',
-  },
-  textarea: {
-    width: '100%',
-    padding: '12px 48px 12px 16px', // right padding to leave space for button
-    borderRadius: '16px',
-    border: '1px solid #e5e7eb', // gray-200
-    backgroundColor: '#f9fafb', // gray-50
-    resize: 'none',
-    outline: 'none',
-    fontSize: '16px',
-    fontFamily: 'inherit',
-    boxSizing: 'border-box',
-    transition: 'box-shadow 0.2s ease',
-  },
-  sendButton: {
-    position: 'absolute',
-    right: '8px',
-    bottom: '8px',
-    padding: '10px',
-    borderRadius: '16px',
-    border: 'none',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'all 0.2s ease',
-  },
-  sendButtonActive: {
-    backgroundColor: '#3b82f6', // blue-500
-    color: 'white',
-    boxShadow:
-      '0 4px 6px -1px rgba(59, 130, 246, 0.5), 0 2px 4px -1px rgba(59, 130, 246, 0.06)', // shadow-md blue
-  },
-  sendButtonDisabled: {
-    backgroundColor: '#f3f4f6', // gray-100
-    color: '#9ca3af', // gray-400
-    cursor: 'not-allowed',
-  },
-  listeningContainer: {
-    marginTop: '12px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '12px',
-    color: '#2563eb', // blue-600
-  },
-  listeningText: {
-    fontSize: '14px',
-    fontWeight: '500',
-  },
 };
 
 export default InputArea;
