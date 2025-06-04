@@ -37,9 +37,9 @@ const InputArea = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <div style={styles.relative}>
+    <div style={{ padding: '16px' }}>
+      <form onSubmit={handleSubmit} style={{ position: 'relative' }}>
+        <div style={{ position: 'relative' }}>
           <textarea
             ref={inputRef}
             value={input}
@@ -48,7 +48,17 @@ const InputArea = () => {
             placeholder={`Type or speak in ${selectedLanguage.name}...`}
             rows={1}
             style={{
-              ...styles.textarea,
+              width: '100%',
+              padding: '12px 48px 12px 16px',
+              borderRadius: '16px',
+              border: '1px solid #e5e7eb',
+              backgroundColor: '#f9fafb',
+              resize: 'none',
+              outline: 'none',
+              fontSize: '16px',
+              fontFamily: 'inherit',
+              boxSizing: 'border-box',
+              transition: 'box-shadow 0.2s ease',
               minHeight: '60px',
             }}
           />
@@ -56,21 +66,51 @@ const InputArea = () => {
           <button
             disabled={!input.trim()}
             style={{
-              ...styles.sendButton,
-              ...(input.trim()
-                ? styles.sendButtonActive
-                : styles.sendButtonDisabled),
+              position: 'absolute',
+              right: '8px',
+              bottom: '8px',
+              padding: '10px',
+              borderRadius: '16px',
+              border: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all 0.2s ease',
+              backgroundColor: input.trim() ? '#3b82f6' : '#f3f4f6',
+              color: input.trim() ? 'white' : '#9ca3af',
+              boxShadow: input.trim()
+                ? '0 4px 6px -1px rgba(59, 130, 246, 0.5), 0 2px 4px -1px rgba(59, 130, 246, 0.06)'
+                : 'none',
+              cursor: input.trim() ? 'pointer' : 'not-allowed',
             }}
           >
             <Send size={20} />
           </button>
         </div>
 
+<<<<<<< HEAD
         {/* Voice waveform indicator */}
         {isListening && ( // Conditionally render the listening indicator
           <div style={styles.listeningContainer}>
             <VoiceWaveform /> {/* Render VoiceWaveform here */}
             <p style={styles.listeningText}>Listening in {selectedLanguage.name}...</p>
+=======
+        {isListening && (
+          <div
+            style={{
+              marginTop: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '12px',
+              color: '#2563eb',
+            }}
+          >
+            <VoiceWaveform />
+            <p style={{ fontSize: '14px', fontWeight: '500' }}>
+              Listening in {selectedLanguage.name}...
+            </p>
+>>>>>>> ccedc040dadb8480a7874cfd645c7415eda22ed6
           </div>
         )}
 
@@ -80,6 +120,7 @@ const InputArea = () => {
   );
 };
 
+<<<<<<< HEAD
 const styles = {
   container: {
     padding: '16px',
@@ -141,4 +182,6 @@ const styles = {
   },
 };
 
+=======
+>>>>>>> ccedc040dadb8480a7874cfd645c7415eda22ed6
 export default InputArea;
