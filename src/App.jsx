@@ -5,7 +5,7 @@ import SideNav from "./components/SideNav";
 import "./App.css";
 
 function App() {
-  const [sideNavOpen, setSideNavOpen] = useState(true);
+const [sideNavOpen, setSideNavOpen] = useState(false);
 
   const toggleSideNav = () => {
     setSideNavOpen(!sideNavOpen);

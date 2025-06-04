@@ -1,24 +1,52 @@
+/* Header */
 .app-header {
-  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); /* pastel lavender to sky blue */
   padding: 2rem;
   padding-top: 1rem;
   text-align: center;
-  color: white;
+  color: #4a4a4a; /* dark gray for better contrast */
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 30px;
   position: relative;
+  box-shadow: 0 4px 10px rgba(200, 180, 220, 0.2);
 }
 
+/* Sidebar toggle button */
 .side-nav-toggle {
   position: absolute;
   left: 20px;
   top: 20px;
-  background: #111;
+  background: #b794f4; /* pastel purple */
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 6px 12px;
   font-size: 1rem;
   cursor: pointer;
   z-index: 1100;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s ease;
+}
+
+.side-nav-toggle:hover {
+  background: #9f7aea; /* deeper pastel purple */
+}
+
+/* Main content */
+main {
+  padding: 1.5rem;
+  transition: margin-left 0.3s ease;
+  background-color: #fdf6ff; /* soft lavender tint */
+  min-height: 100vh;
+  color: #333;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Responsive behavior based on sidebar state */
+.App.side-nav-open main {
+  margin-left: 260px; /* same as sidebar width */
+}
+
+.App.side-nav-closed main {
+  margin-left: 0;
 }
