@@ -34,12 +34,15 @@ export const ConversationProvider = ({ children }) => {
       if (data.currentConversationId) {
         setCurrentConversationId(data.currentConversationId);
         const currentConv = data.allConversations[data.currentConversationId];
+        // Load messages for the current conversation
         if (currentConv) {
           const convertedMessages = currentConv.messages.map((msg) => ({
             ...msg,
             timestamp: new Date(msg.timestamp),
           }));
           setMessages(convertedMessages);
+        } else {
+          setMessages([]);
         }
       }
     }
@@ -51,7 +54,7 @@ export const ConversationProvider = ({ children }) => {
       allConversations[conv.id] = {
         id: conv.id,
         title: conv.title,
-        messages: conv.id === currentConversationId ? messages : [],
+        messages: conv.id === currentConversationId ? messages : allConversations[conv.id]?.messages || [], // Preserve messages for other conversations
         timestamp: conv.timestamp,
         score: conv.score,
       };
@@ -67,43 +70,21 @@ export const ConversationProvider = ({ children }) => {
     );
   }, [conversations, currentConversationId, messages]);
 
-  const addMessage = useCallback((message) => {
-    const newMessage = {
-      ...message,
-      id: uuidv4(),
-      timestamp: new Date(),
-    };
+  const addMessage = useCallback(
+    (message) => {
+      const newMessage = {
+        ...message,
+        id: uuidv4(),
+        timestamp: new Date(),
+      };
 
-    setMessages((prev) => [...prev, newMessage]);
+      setMessages((prev) => [...prev, newMessage]);
 
-    if (!currentConversationId) {
-      const newId = uuidv4();
-      const title =
-        message.content.slice(0, 30) +
-        (message.content.length > 30 ? '...' : '');
-      setCurrentConversationId(newId);
-      setConversations((prev) => [
-        {
-          id: newId,
-          title,
-          timestamp: new Date(),
-          messageCount: 1,
-        },
-        ...prev,
-      ]);
-    } else {
-      setConversations((prev) =>
-        prev.map((conv) =>
-          conv.id === currentConversationId
-            ? { ...conv, messageCount: conv.messageCount + 1 }
-            : conv
-        )
-      );
-    }
-
-    return newMessage;
-  }, [currentConversationId]);
-
+      setConversations((prev) => {
+ return prev.map((conv) => conv.id === currentConversationId ? { ...conv, messageCount: conv.messageCount + 1 } : conv);
+      });
+ return newMessage; // Return the added message
+  }, [currentConversationId, setMessages, setConversations]);
   const processMessage = useCallback(
     async (content) => {
       const pendingMessageId = uuidv4();
@@ -145,9 +126,18 @@ export const ConversationProvider = ({ children }) => {
     [messages, speak]
   );
 
+  // Modified clearMessages to create a new conversation
   const clearMessages = useCallback(() => {
     setMessages([]);
-    setCurrentConversationId(null);
+    const newId = uuidv4();
+    const newConversation = {
+      id: newId,
+      title: 'New Chat', // Or a generated title based on first message
+      timestamp: new Date(),
+      messageCount: 0,
+    };
+    setConversations(prev => [newConversation, ...prev]);
+    setCurrentConversationId(newId);
   }, []);
 
   const rateConversation = useCallback((id, score) => {

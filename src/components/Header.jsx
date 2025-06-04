@@ -5,241 +5,138 @@ const Header = ({ onSettingsClick, isSidebarOpen, setIsSidebarOpen }) => {
   const { clearMessages } = useConversation();
 
   return (
-<<<<<<< HEAD
     <header style={styles.header}>
       <div style={styles.container}>
-        {/* Sidebar Toggle Button */}
-        <button
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          aria-label={isSidebarOpen ? "Close sidebar" : "Open sidebar"}
-          style={styles.toggleButton}
-        >
-          {isSidebarOpen ? (
-            <PanelLeftClose style={styles.icon} />
-          ) : (
-            <PanelLeft style={styles.icon} />
-          )}
-        </button>
         <div style={styles.leftGroup}>
-        <div style={styles.leftSection}>
-          <div style={styles.logoCircle}>
-            <span style={styles.logoText}>AI</span>
-          </div>
-          <div style={styles.titleContainer}>
-            <h1 style={styles.title}>Sales Assistant</h1>
-            <p style={styles.subtitle}>Your multilingual sales companion</p>
-=======
-    <header
-      style={{
-        background: 'linear-gradient(to right, #2563eb, #1e40af)',
-        boxShadow:
-          '0 10px 15px -3px rgba(59, 130, 246, 0.7), 0 4px 6px -4px rgba(37, 99, 235, 0.7)',
-        position: 'relative',
-        zIndex: 10,
-      }}
-    >
-      <div
-        style={{
-          maxWidth: '1280px',
-          margin: '0 auto',
-          padding: '1rem 1.5rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-          }}
-        >
-          <div
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '9999px',
-              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(8px)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'white',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              fontWeight: 600,
-              fontSize: '1.125rem',
-              userSelect: 'none',
-            }}
+          {/* Sidebar Toggle */}
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            aria-label={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+            style={styles.toggleButton}
           >
-            AI
-          </div>
-          <div>
-            <h1
-              style={{
-                fontSize: '1.25rem',
-                fontWeight: 600,
-                color: 'white',
-                margin: 0,
-                userSelect: 'none',
-              }}
-            >
-              SalesAssist AI
-            </h1>
-            <p
-              style={{
-                fontSize: '0.875rem',
-                color: '#bfdbfe',
-                margin: 0,
-                userSelect: 'none',
-              }}
-            >
-              Your multilingual sales companion
-            </p>
->>>>>>> ccedc040dadb8480a7874cfd645c7415eda22ed6
+            {isSidebarOpen ? (
+              <PanelLeftClose style={styles.icon} />
+            ) : (
+              <PanelLeft style={styles.icon} />
+            )}
+          </button>
+
+          <div style={styles.leftSection}>
+            <div style={styles.logoCircle}>
+              <span style={styles.logoText}>AI</span>
+            </div>
+            <div style={styles.titleContainer}>
+              <h1 style={styles.title}>SalesAssist AI</h1>
+              <p style={styles.subtitle}>Your multilingual sales companion</p>
+            </div>
           </div>
         </div>
 
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-          }}
-        >
-          <button
-            onClick={clearMessages}
-            aria-label="Start a new chat"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.375rem',
-              padding: '0.375rem 0.75rem',
-              fontSize: '0.875rem',
-              color: 'white',
-              backgroundColor: 'transparent',
-              borderRadius: '9999px',
-              cursor: 'pointer',
-              transition: 'background-color 0.2s ease',
-              border: 'none',
-            }}
-          >
-            <PlusCircle style={{ width: '16px', height: '16px' }} />
-            <span>
-              New Chat
-            </span>
+        <div style={styles.rightSection}>
+          <button onClick={clearMessages} aria-label="Start a new chat" style={styles.newChatButton}>
+            <PlusCircle style={styles.plusIcon} />
+            <span style={styles.newChatText}>New Chat</span>
           </button>
 
-          <button
-            onClick={onSettingsClick}
-            aria-label="Settings"
-            style={{
-              padding: '0.5rem',
-              borderRadius: '9999px',
-              backgroundColor: 'transparent',
-              cursor: 'pointer',
-              transition: 'background-color 0.2s ease',
-              border: 'none',
-              color: 'white',
-            }}
-          >
-            <Settings style={{ width: '20px', height: '20px' }} />
+          <button onClick={onSettingsClick} aria-label="Settings" style={styles.settingsButton}>
+            <Settings style={styles.settingsIcon} />
           </button>
-        </div>
         </div>
       </div>
     </header>
   );
 };
 
-<<<<<<< HEAD
 const styles = {
   header: {
-    background: 'linear-gradient(to right, #2563eb, #1e40af)', // from-blue-600 to-blue-800
-    boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.7), 0 4px 6px -4px rgba(37, 99, 235, 0.7)', // approximate shadow-lg
+    background: 'linear-gradient(to right, #2563eb, #1e40af)',
+    boxShadow: '0 10px 15px -3px rgba(59, 130, 246, 0.7), 0 4px 6px -4px rgba(37, 99, 235, 0.7)',
     position: 'relative',
     zIndex: 10,
   },
   container: {
-    maxWidth: '1280px', // max-w-7xl
+    maxWidth: '1280px',
     margin: '0 auto',
-    padding: '1rem 1.5rem', // py-4 px-4 sm:px-6 lg:px-8
+    padding: '1rem 1.5rem',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
- leftGroup: {
+  leftGroup: {
     display: 'flex',
     alignItems: 'center',
-    gap: '0.75rem', // Add space between toggle and logo/text
- },
+    gap: '0.75rem',
+  },
   toggleButton: {
     backgroundColor: 'transparent',
     border: 'none',
     cursor: 'pointer',
-    padding: '0.5rem', // Add some padding for click area
+    padding: '0.5rem',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: '0.75rem', // Add space between the toggle and logo
-    color: 'white', // Set icon color to white
-    transition: 'color 0.2s ease', // Smooth transition for hover
+    marginRight: '0.75rem',
+    color: 'white',
+    transition: 'color 0.2s ease',
+  },
+  icon: {
+    width: '24px',
+    height: '24px',
+    color: 'white',
   },
   leftSection: {
     display: 'flex',
     alignItems: 'center',
-    gap: '0.75rem', // gap-3
-  },
-  titleContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
+    gap: '0.75rem',
   },
   logoCircle: {
-    width: '40px', // w-10
-    height: '40px', // h-10
-    borderRadius: '9999px', // rounded-full
-    backgroundColor: 'rgba(255, 255, 255, 0.1)', // bg-white/10
-    backdropFilter: 'blur(8px)', // backdrop-blur-sm
+    width: '40px',
+    height: '40px',
+    borderRadius: '9999px',
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backdropFilter: 'blur(8px)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     color: 'white',
-    border: '1px solid rgba(255, 255, 255, 0.2)', // border-white/20
+    border: '1px solid rgba(255, 255, 255, 0.2)',
     fontWeight: 600,
-    fontSize: '1.125rem', // text-lg
+    fontSize: '1.125rem',
   },
   logoText: {
     fontWeight: 600,
     fontSize: '1.125rem',
     userSelect: 'none',
   },
+  titleContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
   title: {
-    fontSize: '1.25rem', // text-xl
+    fontSize: '1.25rem',
     fontWeight: 600,
     color: 'white',
     margin: 0,
     userSelect: 'none',
-    display: 'none', // hidden sm:block - will show below in media query
   },
   subtitle: {
-    fontSize: '0.875rem', // text-sm
-    color: '#bfdbfe', // text-blue-100
+    fontSize: '0.875rem',
+    color: '#bfdbfe',
     margin: 0,
     userSelect: 'none',
-    display: 'none', // hidden sm:block - show below
   },
   rightSection: {
     display: 'flex',
     alignItems: 'center',
-    gap: '0.5rem', // gap-2
+    gap: '0.5rem',
   },
   newChatButton: {
     display: 'flex',
     alignItems: 'center',
-    gap: '0.375rem', // gap-1.5
-    padding: '0.375rem 0.75rem', // py-1.5 px-3
-    fontSize: '0.875rem', // text-sm
+    gap: '0.375rem',
+    padding: '0.375rem 0.75rem',
+    fontSize: '0.875rem',
     color: 'white',
     backgroundColor: 'transparent',
     borderRadius: '9999px',
@@ -248,11 +145,11 @@ const styles = {
     border: 'none',
   },
   plusIcon: {
-    width: '16px', // w-4
-    height: '16px', // h-4
+    width: '16px',
+    height: '16px',
   },
   newChatText: {
-    display: 'none', // hidden sm:inline - show below in media query
+    display: 'inline',
   },
   settingsButton: {
     padding: '0.5rem',
@@ -264,16 +161,9 @@ const styles = {
     color: 'white',
   },
   settingsIcon: {
-    width: '20px', // w-5
-    height: '20px', // h-5
-  },
-  icon: {
-    width: '24px', // Increased size slightly for visibility
-    height: '24px',
-    color: 'white', // Ensure icon is white
+    width: '20px',
+    height: '20px',
   },
 };
 
-=======
->>>>>>> ccedc040dadb8480a7874cfd645c7415eda22ed6
 export default Header;
