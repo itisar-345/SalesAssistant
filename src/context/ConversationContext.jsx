@@ -6,6 +6,7 @@ import { processQuery } from '../services/nlpService';
 const ConversationContext = createContext(undefined);
 
 const STORAGE_KEY = 'voice_assistant_conversations';
+const CONVERSATION_EXPIRY = 30 * 24 * 60 * 60 * 1000; // 30 days
 
 export const useConversation = () => {
   const context = useContext(ConversationContext);
@@ -19,143 +20,226 @@ export const ConversationProvider = ({ children }) => {
   const [messages, setMessages] = useState([]);
   const [conversations, setConversations] = useState([]);
   const [currentConversationId, setCurrentConversationId] = useState(null);
+  const [allConversations, setAllConversations] = useState({});
   const { speak } = useSpeech();
 
   useEffect(() => {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       const data = JSON.parse(stored);
-      const convertedConversations = data.conversations.map((conv) => ({
-        ...conv,
-        timestamp: new Date(conv.timestamp),
-      }));
-      setConversations(convertedConversations);
+      const now = Date.now();
 
-      if (data.currentConversationId) {
-        setCurrentConversationId(data.currentConversationId);
-        const currentConv = data.allConversations[data.currentConversationId];
-        // Load messages for the current conversation
-        if (currentConv) {
-          const convertedMessages = currentConv.messages.map((msg) => ({
-            ...msg,
-            timestamp: new Date(msg.timestamp),
-          }));
-          setMessages(convertedMessages);
-        } else {
-          setMessages([]);
+      const validConversations = (data.conversations || [])
+        .filter(conv => now - new Date(conv.timestamp).getTime() < CONVERSATION_EXPIRY)
+        .map(conv => ({
+          ...conv,
+          timestamp: new Date(conv.timestamp),
+          score: conv.score || 0
+        }));
+
+      setConversations(validConversations);
+
+      const validAllConversations = {};
+      Object.entries(data.allConversations || {}).forEach(([id, conv]) => {
+        if (now - new Date(conv.timestamp).getTime() < CONVERSATION_EXPIRY) {
+          validAllConversations[id] = {
+            ...conv,
+            timestamp: new Date(conv.timestamp),
+            score: conv.score || 0,
+            messages: (conv.messages || []).map(msg => ({
+              ...msg,
+              timestamp: new Date(msg.timestamp)
+            }))
+          };
         }
+      });
+
+      setAllConversations(validAllConversations);
+
+      if (data.currentConversationId && validAllConversations[data.currentConversationId]) {
+        setCurrentConversationId(data.currentConversationId);
+        setMessages(validAllConversations[data.currentConversationId].messages || []);
       }
     }
   }, []);
 
   useEffect(() => {
-    const allConversations = {};
-    conversations.forEach((conv) => {
-      allConversations[conv.id] = {
-        id: conv.id,
-        title: conv.title,
-        messages: conv.id === currentConversationId ? messages : allConversations[conv.id]?.messages || [], // Preserve messages for other conversations
-        timestamp: conv.timestamp,
-        score: conv.score,
-      };
-    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      conversations,
+      currentConversationId,
+      allConversations
+    }));
+  }, [conversations, currentConversationId, allConversations]);
 
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        conversations,
-        currentConversationId,
-        allConversations,
-      })
-    );
-  }, [conversations, currentConversationId, messages]);
+  const addMessage = useCallback((message) => {
+    const newMessage = {
+      ...message,
+      id: uuidv4(),
+      timestamp: new Date(),
+    };
 
-  const addMessage = useCallback(
-    (message) => {
-      const newMessage = {
-        ...message,
-        id: uuidv4(),
+    setMessages(prev => [...prev, newMessage]);
+
+    if (!currentConversationId) {
+      const newId = uuidv4();
+      const title = message.content.slice(0, 30) + (message.content.length > 30 ? '...' : '');
+
+      setCurrentConversationId(newId);
+      setConversations(prev => [{
+        id: newId,
+        title,
         timestamp: new Date(),
+        messageCount: 1,
+        score: 0
+      }, ...prev]);
+
+      setAllConversations(prev => ({
+        ...prev,
+        [newId]: {
+          id: newId,
+          title,
+          messages: [newMessage],
+          timestamp: new Date(),
+          score: 0
+        }
+      }));
+    } else {
+      setConversations(prev =>
+        prev.map(conv =>
+          conv.id === currentConversationId
+            ? { ...conv, messageCount: conv.messageCount + 1, timestamp: new Date() }
+            : conv
+        )
+      );
+
+      setAllConversations(prev => ({
+        ...prev,
+        [currentConversationId]: {
+          ...prev[currentConversationId],
+          messages: [...(prev[currentConversationId].messages || []), newMessage],
+          timestamp: new Date()
+        }
+      }));
+    }
+
+    return newMessage;
+  }, [currentConversationId]);
+
+  const processMessage = useCallback(async (content) => {
+    const pendingMessageId = uuidv4();
+    const pendingMessage = {
+      id: pendingMessageId,
+      sender: 'assistant',
+      content: '',
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, pendingMessage]);
+
+    if (currentConversationId) {
+      setAllConversations(prev => ({
+        ...prev,
+        [currentConversationId]: {
+          ...prev[currentConversationId],
+          messages: [...(prev[currentConversationId].messages || []), pendingMessage]
+        }
+      }));
+    }
+
+    try {
+      const response = await processQuery(content, messages);
+      const finalMessage = {
+        ...pendingMessage,
+        content: response
       };
 
-      setMessages((prev) => [...prev, newMessage]);
+      setMessages(prev => prev.map(msg => msg.id === pendingMessageId ? finalMessage : msg));
 
-      setConversations((prev) => {
- return prev.map((conv) => conv.id === currentConversationId ? { ...conv, messageCount: conv.messageCount + 1 } : conv);
-      });
- return newMessage; // Return the added message
-  }, [currentConversationId, setMessages, setConversations]);
-  const processMessage = useCallback(
-    async (content) => {
-      const pendingMessageId = uuidv4();
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: pendingMessageId,
-          sender: 'assistant',
-          content: '',
-          timestamp: new Date(),
-        },
-      ]);
-
-      try {
-        const response = await processQuery(content, messages);
-
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === pendingMessageId
-              ? { ...msg, content: response, timestamp: new Date() }
-              : msg
-          )
-        );
-
-        speak(response);
-      } catch (error) {
-        const errorMessage =
-          "I apologize, but I'm having trouble processing your request. Could you try again?";
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === pendingMessageId
-              ? { ...msg, content: errorMessage, timestamp: new Date() }
-              : msg
-          )
-        );
-        speak(errorMessage);
+      if (currentConversationId) {
+        setAllConversations(prev => ({
+          ...prev,
+          [currentConversationId]: {
+            ...prev[currentConversationId],
+            messages: (prev[currentConversationId].messages || []).map(msg =>
+              msg.id === pendingMessageId ? finalMessage : msg
+            ),
+            timestamp: new Date()
+          }
+        }));
       }
-    },
-    [messages, speak]
-  );
 
-  // Modified clearMessages to create a new conversation
+      speak(response);
+    } catch (error) {
+      const errorMessage = "I apologize, but I'm having trouble processing your request. Could you try again?";
+      const errorFinalMessage = {
+        ...pendingMessage,
+        content: errorMessage
+      };
+
+      setMessages(prev => prev.map(msg => msg.id === pendingMessageId ? errorFinalMessage : msg));
+
+      if (currentConversationId) {
+        setAllConversations(prev => ({
+          ...prev,
+          [currentConversationId]: {
+            ...prev[currentConversationId],
+            messages: (prev[currentConversationId].messages || []).map(msg =>
+              msg.id === pendingMessageId ? errorFinalMessage : msg
+            )
+          }
+        }));
+      }
+
+      speak(errorMessage);
+    }
+  }, [messages, speak, currentConversationId]);
+
+  const loadConversation = useCallback((id) => {
+    const conversation = allConversations[id];
+    if (conversation) {
+      setCurrentConversationId(id);
+      setMessages(conversation.messages || []);
+
+      setConversations(prev =>
+        prev.map(conv => conv.id === id ? { ...conv, timestamp: new Date() } : conv)
+      );
+
+      setAllConversations(prev => ({
+        ...prev,
+        [id]: { ...prev[id], timestamp: new Date() }
+      }));
+    }
+  }, [allConversations]);
+
   const clearMessages = useCallback(() => {
     setMessages([]);
-    const newId = uuidv4();
-    const newConversation = {
-      id: newId,
-      title: 'New Chat', // Or a generated title based on first message
-      timestamp: new Date(),
-      messageCount: 0,
-    };
-    setConversations(prev => [newConversation, ...prev]);
-    setCurrentConversationId(newId);
+    setCurrentConversationId(null);
   }, []);
 
   const rateConversation = useCallback((id, score) => {
-    setConversations((prev) =>
-      prev.map((conv) => (conv.id === id ? { ...conv, score } : conv))
-    );
+    setConversations(prev => prev.map(conv =>
+      conv.id === id ? { ...conv, score } : conv
+    ));
+
+    setAllConversations(prev => ({
+      ...prev,
+      [id]: { ...prev[id], score }
+    }));
   }, []);
 
-  const deleteConversation = useCallback(
-    (id) => {
-      setConversations((prev) => prev.filter((conv) => conv.id !== id));
-      if (currentConversationId === id) {
-        setCurrentConversationId(null);
-        setMessages([]);
-      }
-    },
-    [currentConversationId]
-  );
+  const deleteConversation = useCallback((id) => {
+    setConversations(prev => prev.filter(conv => conv.id !== id));
+    setAllConversations(prev => {
+      const updated = { ...prev };
+      delete updated[id];
+      return updated;
+    });
+
+    if (currentConversationId === id) {
+      setCurrentConversationId(null);
+      setMessages([]);
+    }
+  }, [currentConversationId]);
 
   return (
     <ConversationContext.Provider
@@ -169,6 +253,7 @@ export const ConversationProvider = ({ children }) => {
         setCurrentConversationId,
         rateConversation,
         deleteConversation,
+        loadConversation
       }}
     >
       {children}

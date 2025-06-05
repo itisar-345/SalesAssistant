@@ -3,12 +3,12 @@ import { useConversation } from '../context/ConversationContext';
 import { formatRelativeTime } from '../utils/timeUtils';
 
 const Sidebar = () => {
-  const { 
-    conversations, 
-    currentConversationId, 
-    setCurrentConversationId,
+  const {
+    conversations,
+    currentConversationId,
+    loadConversation,
     rateConversation,
-    deleteConversation
+    deleteConversation,
   } = useConversation();
 
   return (
@@ -17,61 +17,58 @@ const Sidebar = () => {
         width: '100%',
         height: 'calc(100vh - 64px)',
         overflowY: 'auto',
-        backgroundColor: '#f9fafb', // gray-50
-        borderRight: '1px solid #e5e7eb', // gray-200
+        backgroundColor: '#F9FAFB', // Tailwind's gray-50
+        borderRight: '1px solid #E5E7EB', // Tailwind's gray-200
       }}
     >
-      <div style={{ padding: 16 }}>
+      <div style={{ padding: '1rem' }}>
         <h2
           style={{
-            fontSize: 14,
+            fontSize: '0.875rem',
             fontWeight: 500,
-            color: '#6b7280', // gray-500
-            marginBottom: 12,
+            color: '#6B7280', // Tailwind's gray-500
+            marginBottom: '0.75rem',
           }}
         >
           Chat History
         </h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           {conversations.map((conversation) => {
             const isActive = currentConversationId === conversation.id;
             return (
               <button
                 key={conversation.id}
-                onClick={() => setCurrentConversationId(conversation.id)}
+                onClick={() => loadConversation(conversation.id)}
                 style={{
                   width: '100%',
                   textAlign: 'left',
-                  padding: 12,
-                  borderRadius: 12,
-                  backgroundColor: isActive ? '#eff6ff' /* blue-50 */ : 'transparent',
-                  color: isActive ? '#1d4ed8' /* blue-700 */ : '#374151' /* gray-700 */,
-                  border: 'none',
+                  padding: '0.75rem',
+                  borderRadius: '0.5rem',
+                  backgroundColor: isActive ? '#EFF6FF' : 'transparent', // blue-50
+                  color: isActive ? '#1D4ED8' : '#374151', // blue-700 / gray-700
+                  transition: 'background-color 0.2s',
                   cursor: 'pointer',
-                  transition: 'background-color 0.2s ease, color 0.2s ease',
-                  display: 'flex',
-                  flexDirection: 'column',
                 }}
-                onMouseEnter={e => {
-                  if (!isActive) e.currentTarget.style.backgroundColor = '#f3f4f6'; // gray-100
+                onMouseEnter={(e) => {
+                  if (!isActive) e.currentTarget.style.backgroundColor = '#F3F4F6'; // gray-100
                 }}
-                onMouseLeave={e => {
+                onMouseLeave={(e) => {
                   if (!isActive) e.currentTarget.style.backgroundColor = 'transparent';
                 }}
               >
                 <div
                   style={{
                     display: 'flex',
-                    justifyContent: 'space-between',
                     alignItems: 'flex-start',
-                    marginBottom: 4,
+                    justifyContent: 'space-between',
                   }}
                 >
                   <div
                     style={{
                       display: 'flex',
                       alignItems: 'flex-start',
-                      gap: 12,
+                      gap: '0.75rem',
                       flex: 1,
                       minWidth: 0,
                     }}
@@ -80,7 +77,7 @@ const Sidebar = () => {
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p
                         style={{
-                          fontSize: 14,
+                          fontSize: '0.875rem',
                           fontWeight: 500,
                           whiteSpace: 'nowrap',
                           overflow: 'hidden',
@@ -92,70 +89,55 @@ const Sidebar = () => {
                       </p>
                       <p
                         style={{
-                          fontSize: 12,
-                          color: '#6b7280', // gray-500
+                          fontSize: '0.75rem',
+                          color: '#6B7280',
+                          marginTop: '0.125rem',
                           margin: 0,
-                          marginTop: 2,
                         }}
                       >
                         {formatRelativeTime(conversation.timestamp)}
                       </p>
                     </div>
                   </div>
-
                   <div
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 4,
+                      gap: '0.25rem',
                       flexShrink: 0,
                     }}
                   >
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        rateConversation(
-                          conversation.id, 
-                          conversation.score === 1 ? 0 : 1
-                        );
+                        rateConversation(conversation.id, conversation.score === 1 ? 0 : 1);
                       }}
-                      aria-label={conversation.score === 1 ? "Unstar conversation" : "Star conversation"}
                       style={{
-                        padding: 4,
-                        color: conversation.score === 1 ? '#f59e0b' : '#9ca3af', // yellow-500 or gray-400
-                        backgroundColor: 'transparent',
-                        border: 'none',
+                        padding: '0.25rem',
+                        color: conversation.score === 1 ? '#FACC15' : '#9CA3AF', // yellow-500 or gray-400
                         cursor: 'pointer',
-                        transition: 'color 0.2s ease',
-                        display: 'flex',
                       }}
-                      onMouseEnter={e => e.currentTarget.style.color = '#fbbf24'} // yellow-400
-                      onMouseLeave={e => e.currentTarget.style.color = conversation.score === 1 ? '#f59e0b' : '#9ca3af'}
+                      title={conversation.score === 1 ? 'Unstar conversation' : 'Star conversation'}
                     >
                       {conversation.score === 1 ? (
-                        <Star style={{ width: 16, height: 16, fill: '#f59e0b', color: '#f59e0b' }} />
+                        <Star style={{ width: 16, height: 16, fill: '#FACC15' }} />
                       ) : (
                         <StarOff style={{ width: 16, height: 16 }} />
                       )}
                     </button>
-
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         deleteConversation(conversation.id);
                       }}
-                      aria-label="Delete conversation"
                       style={{
-                        padding: 4,
-                        color: '#9ca3af', // gray-400
-                        backgroundColor: 'transparent',
-                        border: 'none',
+                        padding: '0.25rem',
+                        color: '#9CA3AF',
                         cursor: 'pointer',
-                        transition: 'color 0.2s ease',
-                        display: 'flex',
                       }}
-                      onMouseEnter={e => e.currentTarget.style.color = '#ef4444'} // red-500
-                      onMouseLeave={e => e.currentTarget.style.color = '#9ca3af'}
+                      title="Delete conversation"
+                      onMouseEnter={(e) => (e.currentTarget.style.color = '#EF4444')} // red-500
+                      onMouseLeave={(e) => (e.currentTarget.style.color = '#9CA3AF')}
                     >
                       <Trash2 style={{ width: 16, height: 16 }} />
                     </button>
@@ -163,10 +145,9 @@ const Sidebar = () => {
                 </div>
                 <p
                   style={{
-                    fontSize: 12,
-                    color: '#6b7280', // gray-500
-                    margin: 0,
-                    marginTop: 4,
+                    fontSize: '0.75rem',
+                    color: '#6B7280',
+                    marginTop: '0.25rem',
                   }}
                 >
                   {conversation.messageCount} messages
@@ -179,13 +160,12 @@ const Sidebar = () => {
             <div
               style={{
                 textAlign: 'center',
-                paddingTop: 32,
-                paddingBottom: 32,
-                color: '#6b7280', // gray-500
-                fontSize: 14,
+                paddingTop: '2rem',
+                paddingBottom: '2rem',
+                color: '#6B7280',
               }}
             >
-              <p style={{ margin: 0 }}>No conversations yet</p>
+              <p style={{ fontSize: '0.875rem' }}>No conversations yet</p>
             </div>
           )}
         </div>
