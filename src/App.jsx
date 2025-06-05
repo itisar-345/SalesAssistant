@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import ChatInterface from './components/ChatInterface';
-import { PanelLeftClose, PanelLeft } from 'lucide-react';
 import Header from './components/Header';
 import SettingsPanel from './components/SettingsPanel';
 import Sidebar from './components/Sidebar';
