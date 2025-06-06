@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ChatInterface from './components/ChatInterface';
 import Header from './components/Header';
 import SettingsPanel from './components/SettingsPanel';
@@ -10,6 +10,17 @@ import { SpeechProvider } from './context/SpeechContext';
 function App() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    // API health check
+    fetch('/api/health')
+      .then(res => {
+        if (!res.ok) throw new Error('Backend not connected');
+        return res.json();
+      })
+      .then(data => console.log('Backend connected:', data))
+      .catch(err => console.error('Backend connection error:', err));
+  }, []);
 
   return (
     <SettingsProvider>

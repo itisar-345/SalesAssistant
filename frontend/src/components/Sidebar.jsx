@@ -37,7 +37,7 @@ const Sidebar = () => {
           {conversations.map((conversation) => {
             const isActive = currentConversationId === conversation.id;
             return (
-              <button
+              <div
                 key={conversation.id}
                 onClick={() => loadConversation(conversation.id)}
                 style={{
@@ -152,7 +152,7 @@ const Sidebar = () => {
                 >
                   {conversation.messageCount} messages
                 </p>
-              </button>
+              </div>
             );
           })}
 

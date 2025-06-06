@@ -1,5 +1,5 @@
 import express from 'express';
-import { processQuery } from './nlpService.js';
+import { processQuery } from '../services/nlpService.js';
 
 const router = express.Router();
 
