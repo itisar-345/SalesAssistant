@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useSpeech } from './SpeechContext';
-import { processQuery } from '../services/nlpService';
 
 const ConversationContext = createContext(undefined);
 
@@ -147,10 +146,26 @@ export const ConversationProvider = ({ children }) => {
     }
 
     try {
-      const response = await processQuery(content, messages);
+      // Replace direct processQuery call with API call
+      const response = await fetch('/api/process', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          query: content,
+          messages: messages.filter(m => m.sender === 'user').map(m => m.content)
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('API request failed');
+      }
+
+      const data = await response.json();
       const finalMessage = {
         ...pendingMessage,
-        content: response
+        content: data.response
       };
 
       setMessages(prev => prev.map(msg => msg.id === pendingMessageId ? finalMessage : msg));
@@ -168,8 +183,9 @@ export const ConversationProvider = ({ children }) => {
         }));
       }
 
-      speak(response);
+      speak(data.response);
     } catch (error) {
+      console.error('API Error:', error);
       const errorMessage = "I apologize, but I'm having trouble processing your request. Could you try again?";
       const errorFinalMessage = {
         ...pendingMessage,
